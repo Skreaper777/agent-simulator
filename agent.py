@@ -17,10 +17,12 @@ class Agent:
         self.memory = {"log": []}  # 👈 добавляем лог удовлетворения
         self.lifetime = 0.0
         self.decrease_timer = random.uniform(0, 5) * 1000
+        self.satisfaction_timer = SATISFACTION_INTERVAL  # отсчет для оценки удовлетворения
         self.target_food = None
 
         self.hunger = 100
         self.hunger_timer = random.uniform(0, 5) * 1000
+        self.satisfaction_timer = SATISFACTION_INTERVAL  # отсчет для оценки удовлетворения
         self.satisfaction = self.hunger
 
     def get_vision_params(self):
@@ -32,6 +34,10 @@ class Agent:
 
     def update(self, delta_time):
         self.lifetime += delta_time
+        self.satisfaction_timer -= delta_time
+        if self.satisfaction_timer <= 0:
+            self.evaluate_satisfaction()
+            self.satisfaction_timer += SATISFACTION_INTERVAL
 
         if self.hunger > 80:
             return
@@ -103,6 +109,17 @@ class Agent:
                 self.target_food = food
                 self.target_direction = vec_to_food.normalize()
                 break
+
+    def evaluate_satisfaction(self):
+        """Оценка «моего удовольствия» каждые SATISFACTION_INTERVAL секунд."""
+        self.satisfaction = self.hunger
+        # логирование оценки удовлетворения
+        self.memory.setdefault("log", []).append((
+            self.lifetime,
+            "Моё удовольствие",
+            self.satisfaction,
+            self.hunger
+        ))
 
     def get_position(self):
         return pygame.Vector2(self.x, self.y)

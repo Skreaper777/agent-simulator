@@ -127,6 +127,15 @@ def draw_agent_modal(screen, font, agent, modal_rect, close_rect):
 
     log = agent.memory.get("log", [])[-15:]
     for entry in log:
+        if isinstance(entry, tuple) and len(entry) == 4 and entry[1] == "Моё удовольствие":
+            t, _, sat, hunger = entry
+            lines.append(f"{t:.1f}s — Моё удовольствие {int(sat)} ед., потому что Сытость {int(hunger)} ед.")
+        elif isinstance(entry, tuple) and len(entry) == 3:
+            t, param, delta = entry
+            action = "уменьш." if delta < 0 else "увелич."
+            lines.append(f"{t:.1f}s — {param} {action} на {abs(int(delta))} ед.")
+        else:
+            lines.append(f"Неверный формат памяти: {entry}")
         if isinstance(entry, tuple) and len(entry) == 3:
             t, reason, delta = entry
             t, param, delta = entry
