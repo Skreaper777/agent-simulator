@@ -129,7 +129,7 @@ def draw_agent_modal(screen, font, agent, modal_rect, close_rect):
     for entry in log:
         if isinstance(entry, tuple) and len(entry) == 3:
             t, reason, delta = entry
-            lines.append(f"{t:.1f}s — {reason}: {delta:+}")
+            lines.append(f"{t:.1f}s — Удовл. {'🔻' if delta<0 else '🔺'} на {abs(delta)} ед. Причина {'Сытость' if reason=='голод' else reason.capitalize()} {'🔻' if delta<0 else '🔺'} на {abs(delta)} ед.")
         else:
             lines.append(f"Неверный формат памяти: {entry}")
 

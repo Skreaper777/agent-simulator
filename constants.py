@@ -24,7 +24,7 @@ CLOSE_COLOR = (180, 50, 50)
 # 📏 Размеры экрана и меню
 MAP_WIDTH = 820
 HEIGHT = 600
-MENU_WIDTH = 600
+MENU_WIDTH = 800
 WIDTH = MAP_WIDTH + MENU_WIDTH
 
 # ⚪ Радиусы
