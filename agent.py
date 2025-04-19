@@ -58,7 +58,12 @@ class Agent:
         pass  # отключено автоматическое снижение удовлетворения
     def decrease_hunger(self):
         if self.hunger > 0:
-            self.hunger = max(0, self.hunger - 5)
+                prev = self.hunger
+                self.hunger = max(0, self.hunger - 5)
+                delta = self.hunger - prev
+                self.memory.setdefault("log", []).append((self.lifetime, "Сытость", delta))
+                if len(self.memory["log"]) > 15:
+                    self.memory["log"] = self.memory["log"][-15:]
 
     def avoid_walls(self):
         vision_distance, _ = self.get_vision_params()
