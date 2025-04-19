@@ -22,9 +22,6 @@ def update_food(agents, delta_time, game_speed_multiplier, global_score):
     for agent in agents:
         agent.hunger_timer -= delta_time * 1000 * game_speed_multiplier
         if agent.hunger_timer <= 0:
-            if agent.hunger > 80:
-                gain = min(5, agent.hunger - 80)
-                global_score += gain
             agent.decrease_hunger()
             agent.hunger_timer = BASE_DECREASE_INTERVAL
 

@@ -32,7 +32,6 @@ class Agent:
 
     def update(self, delta_time):
         self.lifetime += delta_time
-        self.update_satisfaction_from_hunger()
 
         if self.hunger > 80:
             return
@@ -56,15 +55,7 @@ class Agent:
         self.y = max(AGENT_RADIUS, min(HEIGHT - AGENT_RADIUS, self.y + dy))
 
     def update_satisfaction_from_hunger(self):
-        previous = self.satisfaction
-        self.satisfaction = min(100, self.hunger)
-        delta = self.satisfaction - previous
-        if delta != 0:
-            reason = "голод" if delta < 0 else "восстановление"
-            self.memory.setdefault("log", []).append((self.lifetime, reason, delta))
-            if len(self.memory["log"]) > 15:
-                self.memory["log"] = self.memory["log"][-15:]
-
+        pass  # отключено автоматическое снижение удовлетворения
     def decrease_hunger(self):
         if self.hunger > 0:
             self.hunger = max(0, self.hunger - 5)
