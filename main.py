@@ -11,7 +11,7 @@ from agent import Agent
 import world
 from ui import (
     draw_speed_buttons,
-    draw_add_buttons,
+    
     draw_score,
     draw_menu_button,
     draw_menu_modal,
@@ -57,15 +57,6 @@ for i, btn in enumerate(speed_buttons):
     rect = pygame.Rect(start_x + i * (button_width + spacing), start_y, button_width, button_height)
     speed_button_rects.append((rect, btn["label"], btn["multiplier"]))
 
-add_buttons = [
-    {"label": "Добавить еду", "mode": "food", "cost": FOOD_COST},
-    {"label": "Купить агента", "mode": "agent", "cost": AGENT_COST},
-]
-add_button_rects = []
-for i, button in enumerate(add_buttons):
-    rect = pygame.Rect(MAP_WIDTH + 20, 250 + i * 50, 180, 30)
-    add_button_rects.append((rect, button["label"], button["mode"], button["cost"]))
-
 agent_modal_rect = pygame.Rect(MAP_WIDTH + 20, 20, MENU_WIDTH - 40, 400)
 close_button_rect = pygame.Rect(agent_modal_rect.right - 25, agent_modal_rect.y + 5, 20, 20)
 
@@ -110,9 +101,6 @@ while True:
                         previous_speed_multiplier = multiplier
                         active_speed_label = label
 
-            for rect, label, mode, cost in add_button_rects:
-                if rect.collidepoint(mouse_pos):
-                    add_mode = None if add_mode == mode else mode
 
             if mouse_pos[0] < MAP_WIDTH:
                 if add_mode == "food" and global_score >= FOOD_COST:
@@ -160,13 +148,12 @@ while True:
     draw_menu_button(screen, font, mouse_pos, show_menu_modal)
 
     if show_menu_modal:
-        color_mode = draw_menu_modal(screen, font, mouse_pos, color_mode)
+        color_mode, add_mode = draw_menu_modal(screen, font, mouse_pos, color_mode, add_mode)
 
     if show_agent_modal and selected_agent:
         draw_agent_modal(screen, font, selected_agent, agent_modal_rect, close_button_rect)
 
     draw_speed_buttons(screen, font, speed_button_rects, active_speed_label)
-    score_y = draw_score(screen, global_score)
-    draw_add_buttons(screen, font, add_button_rects, add_mode, score_y)
+    draw_score(screen, global_score)
 
     pygame.display.flip()

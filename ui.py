@@ -7,7 +7,7 @@ from constants import *
 from utils import gradient_color
 
 menu_button_rect = pygame.Rect(10, 10, 120, 30)
-menu_modal_rect = pygame.Rect(10, 50, 200, 200)
+menu_modal_rect = pygame.Rect(10, 50, 200, 300)
 
 
 def draw_speed_buttons(screen, font, button_rects, active_label):
@@ -45,27 +45,73 @@ def draw_menu_button(screen, font, mouse_pos, is_active):
     # return menu_button_rect.collidepoint(mouse_pos)
 
 
-def draw_menu_modal(screen, font, mouse_pos, current_mode):
+
+def draw_menu_modal(screen, font, mouse_pos, current_mode, current_add_mode):
+    """Draw the left‑top modal and handle one‑click selection.
+
+    Returns:
+        tuple(color_mode, add_mode)
+    """
     pygame.draw.rect(screen, MODAL_BG, menu_modal_rect)
     pygame.draw.rect(screen, WHITE, menu_modal_rect, 2)
-    buttons = [
+
+    color_buttons = [
         ("Удовлетворение", "satisfaction"),
         ("Время жизни", "lifetime"),
         ("Еда", "memory_eat"),
-        ("Зрение", "memory_vision")
+        ("Зрение", "memory_vision"),
     ]
+
+    add_buttons = [
+        ("Добавить еду", "food", FOOD_COST),
+        ("Купить агента", "agent", AGENT_COST),
+    ]
+
+    # ---------- debounce click ----------
+    if not hasattr(draw_menu_modal, "_prev_pressed"):
+        draw_menu_modal._prev_pressed = False
+    mouse_pressed = pygame.mouse.get_pressed()[0]
+    clicked_now = mouse_pressed and not draw_menu_modal._prev_pressed
+    draw_menu_modal._prev_pressed = mouse_pressed
+
     new_mode = current_mode
-    for i, (label, mode) in enumerate(buttons):
-        rect = pygame.Rect(menu_modal_rect.x + 10, menu_modal_rect.y + 10 + i * 40, 180, 30)
-        pygame.draw.rect(screen, BUTTON_ACTIVE_COLOR if current_mode == mode else BUTTON_COLOR, rect)
+    new_add_mode = current_add_mode
+
+    # ----- draw color buttons -----
+    for idx, (label, mode) in enumerate(color_buttons):
+        rect = pygame.Rect(menu_modal_rect.x + 10,
+                           menu_modal_rect.y + 10 + idx * 40,
+                           180, 30)
+        pygame.draw.rect(screen,
+                         BUTTON_ACTIVE_COLOR if current_mode == mode else BUTTON_COLOR,
+                         rect)
         pygame.draw.rect(screen, WHITE, rect, 1)
         text = font.render(label, True, WHITE)
         screen.blit(text, (rect.x + 10, rect.y + 5))
-        if pygame.mouse.get_pressed()[0] and rect.collidepoint(mouse_pos):
+
+        if clicked_now and rect.collidepoint(mouse_pos):
             new_mode = mode
-    return new_mode
 
+    # ----- draw add buttons -----
+    start_y = menu_modal_rect.y + 10 + len(color_buttons) * 40 + 20
+    for idx, (label, mode, cost) in enumerate(add_buttons):
+        rect = pygame.Rect(menu_modal_rect.x + 10,
+                           start_y + idx * 40,
+                           180, 30)
+        pygame.draw.rect(screen,
+                         BUTTON_ACTIVE_COLOR if current_add_mode == mode else BUTTON_COLOR,
+                         rect)
+        pygame.draw.rect(screen, WHITE, rect, 1)
+        text = font.render(f"{label} ({cost})", True, WHITE)
+        screen.blit(text, (rect.x + 10, rect.y + 5))
 
+        if clicked_now and rect.collidepoint(mouse_pos):
+            if current_add_mode == mode:
+                new_add_mode = None
+            else:
+                new_add_mode = mode
+
+    return new_mode, new_add_mode
 def draw_agent_modal(screen, font, agent, modal_rect, close_rect):
     pygame.draw.rect(screen, CLOSE_COLOR, close_rect)
     pygame.draw.line(screen, WHITE, close_rect.topleft, close_rect.bottomright, 2)
