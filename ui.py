@@ -136,13 +136,6 @@ def draw_agent_modal(screen, font, agent, modal_rect, close_rect):
             lines.append(f"{t:.1f}s — {param} {action} на {abs(int(delta))} ед.")
         else:
             lines.append(f"Неверный формат памяти: {entry}")
-        if isinstance(entry, tuple) and len(entry) == 3:
-            t, reason, delta = entry
-            t, param, delta = entry
-            action = "уменьш." if delta < 0 else "увелич."
-            lines.append(f"{t:.1f}s — {param} {action} на {abs(delta)} ед.")
-        else:
-            lines.append(f"Неверный формат памяти: {entry}")
 
     for i, line in enumerate(lines):
         text = font.render(line, True, WHITE)
