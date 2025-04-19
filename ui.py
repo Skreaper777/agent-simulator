@@ -122,10 +122,10 @@ def draw_agent_modal(screen, font, agent, modal_rect, close_rect):
         f"Удовлетворение: {int(agent.satisfaction)}",
         f"Сытость: {int(agent.hunger)}",
         f"Время жизни: {agent.lifetime:.1f} сек",
-        "Лог памяти (последние 5):"
+        "Лог памяти (последние 15):"
     ]
 
-    log = agent.memory.get("log", [])[-5:]
+    log = agent.memory.get("log", [])[-15:]
     for entry in log:
         if isinstance(entry, tuple) and len(entry) == 3:
             t, reason, delta = entry

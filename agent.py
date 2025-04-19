@@ -61,8 +61,9 @@ class Agent:
         delta = self.satisfaction - previous
         if delta != 0:
             reason = "голод" if delta < 0 else "восстановление"
-            time_str = f"t={self.lifetime:.1f}s: {delta:+} от {reason}"
-            self.memory.setdefault("log", []).append(time_str)
+            self.memory.setdefault("log", []).append((self.lifetime, reason, delta))
+            if len(self.memory["log"]) > 15:
+                self.memory["log"] = self.memory["log"][-15:]
 
     def decrease_hunger(self):
         if self.hunger > 0:
